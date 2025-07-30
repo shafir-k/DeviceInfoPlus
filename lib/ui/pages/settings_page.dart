@@ -1,6 +1,6 @@
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:device_info_plus/blocs/bloc/theme_bloc.dart';
+import 'package:device_info_plus/blocs/theme/theme_bloc.dart';
 import 'package:flutter/material.dart'
     hide Scaffold, Colors, Divider, showDialog, AlertDialog, ThemeMode;
 import 'package:flutter_bloc/flutter_bloc.dart';

@@ -1,18 +1,22 @@
 part of 'memory_details_bloc.dart';
 
 @freezed
-class MemoryDetailsState with _$MemoryDetailsState {
+abstract class MemoryDetailsState with _$MemoryDetailsState {
+  /// Initial state
   const factory MemoryDetailsState.initial() = MemoryDetailsInitial;
 
+  /// Loading state
   const factory MemoryDetailsState.loading() = MemoryDetailsLoading;
 
+  /// Loaded state with memory information
   const factory MemoryDetailsState.loaded({
     required AndroidMemoryInfo memoryInfo,
-    @Default(false) bool isRealtimeActive,
     @Default(false) bool isLowMemory,
-    @Default(85.0) double lowMemoryThreshold,
   }) = MemoryDetailsLoaded;
 
+  /// Error state
   const factory MemoryDetailsState.error({required String message}) =
       MemoryDetailsError;
 }
+
+// Extension methods for convenience

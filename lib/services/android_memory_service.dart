@@ -1,249 +1,46 @@
-import 'dart:io';
+import 'dart:async';
 
-import 'package:device_info_plus/main.dart';
+import 'package:flutter/services.dart';
 
+import '../main.dart';
 import '../models/android_memory_info.dart';
 
 class AndroidMemoryService {
-  static const AndroidMemoryService _instance =
+  static final AndroidMemoryService _instance =
       AndroidMemoryService._internal();
   factory AndroidMemoryService() => _instance;
-  const AndroidMemoryService._internal();
+  AndroidMemoryService._internal();
 
-  /// Get comprehensive Android memory information
+  static const MethodChannel _channel = MethodChannel('com.example.app/memory');
+
+  /// Get comprehensive memory information from native Kotlin service
   Future<AndroidMemoryInfo> getMemoryInfo() async {
     try {
-      // Read /proc/meminfo for detailed memory statistics
-      final memInfo = await _readMemInfo();
-
-      // Get additional memory details
-      final memDetails = await _getMemoryDetails();
-
-      // Calculate usage percentage
-      final usagePercentage =
-          memInfo['MemTotal'] != null && memInfo['MemTotal']! > 0
-          ? ((memInfo['MemTotal']! -
-                        (memInfo['MemAvailable'] ?? memInfo['MemFree'] ?? 0)) /
-                    memInfo['MemTotal']!) *
-                100
-          : 0.0;
-
-      return AndroidMemoryInfo(
-        totalMemoryBytes: memInfo['MemTotal'] ?? 0,
-        freeMemoryBytes: memInfo['MemFree'] ?? 0,
-        availableMemoryBytes:
-            memInfo['MemAvailable'] ?? memInfo['MemFree'] ?? 0,
-        usedMemoryBytes:
-            (memInfo['MemTotal'] ?? 0) -
-            (memInfo['MemAvailable'] ?? memInfo['MemFree'] ?? 0),
-        buffersBytes: memInfo['Buffers'] ?? 0,
-        cachedMemoryBytes: memInfo['Cached'] ?? 0,
-        swapTotalBytes: memInfo['SwapTotal'] ?? 0,
-        swapFreeBytes: memInfo['SwapFree'] ?? 0,
-        memoryUsagePercentage: usagePercentage,
-        details: memDetails,
-      );
+      final result = await _channel.invokeMethod('getMemoryInfo');
+      logger.t(result);
+      return _parseComprehensiveMemoryInfo(result);
+    } on PlatformException catch (e) {
+      return _createErrorInfo('Platform error: ${e.message}');
     } catch (e) {
-      return AndroidMemoryInfo(
-        totalMemoryBytes: 0,
-        freeMemoryBytes: 0,
-        availableMemoryBytes: 0,
-        usedMemoryBytes: 0,
-        buffersBytes: 0,
-        cachedMemoryBytes: 0,
-        swapTotalBytes: 0,
-        swapFreeBytes: 0,
-        memoryUsagePercentage: 0.0,
-        details: const AndroidMemoryDetails(),
-        error: 'Failed to read memory info: $e',
-      );
+      return _createErrorInfo('Failed to get memory info: $e');
     }
   }
 
-  /// Read and parse /proc/meminfo
-  Future<Map<String, int>> _readMemInfo() async {
+  /// Check if device is in low memory state
+  Future<bool> isLowMemory() async {
     try {
-      final file = File('/proc/meminfo');
-      final content = await file.readAsString();
-      final Map<String, int> memStats = {};
-      talker.warning(content);
-
-      for (final line in content.split('\n')) {
-        if (line.trim().isEmpty) continue;
-
-        final parts = line.split(':');
-        if (parts.length >= 2) {
-          final key = parts[0].trim();
-          final valueStr = parts[1].trim().replaceAll(RegExp(r'[^\d]'), '');
-          final value = int.tryParse(valueStr);
-
-          if (value != null) {
-            memStats[key] = value * 1024; // Convert KB to bytes
-          }
-        }
-      }
-
-      return memStats;
+      return await _channel.invokeMethod('isLowMemory');
+    } on PlatformException catch (e) {
+      print('Error checking low memory: ${e.message}');
+      return false;
     } catch (e) {
-      throw Exception('Cannot read /proc/meminfo: $e');
+      print('Error checking low memory: $e');
+      return false;
     }
   }
 
-  /// Get additional memory details from various /proc files
-  Future<AndroidMemoryDetails> _getMemoryDetails() async {
-    try {
-      final memInfo = await _readMemInfo();
-      final topProcesses = await _getTopMemoryProcesses();
-      final lowMemKiller = await _getLowMemoryKillerInfo();
-
-      return AndroidMemoryDetails(
-        activeMemoryBytes: memInfo['Active'] ?? 0,
-        inactiveMemoryBytes: memInfo['Inactive'] ?? 0,
-        dirtyMemoryBytes: memInfo['Dirty'] ?? 0,
-        writebackMemoryBytes: memInfo['Writeback'] ?? 0,
-        slabMemoryBytes: memInfo['Slab'] ?? 0,
-        kernelStackBytes: memInfo['KernelStack'] ?? 0,
-        pageCacheBytes: memInfo['PageTables'] ?? 0,
-        vmallocUsedBytes: memInfo['VmallocUsed'] ?? 0,
-        lowMemoryKiller: lowMemKiller,
-        topProcesses: topProcesses,
-      );
-    } catch (e) {
-      return const AndroidMemoryDetails();
-    }
-  }
-
-  /// Get top memory-consuming processes
-  Future<List<ProcessMemoryInfo>> _getTopMemoryProcesses() async {
-    try {
-      // Read /proc/*/status files to get memory usage by process
-      final List<ProcessMemoryInfo> processes = [];
-      final procDir = Directory('/proc');
-
-      await for (final entity in procDir.list()) {
-        if (entity is Directory) {
-          final dirName = entity.path.split('/').last;
-          if (RegExp(r'^\d+$').hasMatch(dirName)) {
-            try {
-              final pid = int.parse(dirName);
-              final statusFile = File('${entity.path}/status');
-              final cmdlineFile = File('${entity.path}/cmdline');
-
-              if (await statusFile.exists() && await cmdlineFile.exists()) {
-                final statusContent = await statusFile.readAsString();
-                final cmdlineContent = await cmdlineFile.readAsString();
-
-                final processInfo = _parseProcessStatus(
-                  statusContent,
-                  cmdlineContent,
-                  pid,
-                );
-                if (processInfo != null && processInfo.memoryKB > 0) {
-                  processes.add(processInfo);
-                }
-              }
-            } catch (e) {
-              // Skip processes we can't read (permission issues)
-              continue;
-            }
-          }
-        }
-      }
-
-      // Sort by memory usage and return top 10
-      processes.sort((a, b) => b.memoryKB.compareTo(a.memoryKB));
-      return processes.take(10).toList();
-    } catch (e) {
-      return [];
-    }
-  }
-
-  /// Parse individual process status file
-  ProcessMemoryInfo? _parseProcessStatus(
-    String statusContent,
-    String cmdlineContent,
-    int pid,
-  ) {
-    try {
-      String processName = 'Unknown';
-      String user = 'Unknown';
-      int memoryKB = 0;
-
-      // Extract process name from cmdline
-      if (cmdlineContent.isNotEmpty) {
-        final cmdParts = cmdlineContent.split('\x00');
-        if (cmdParts.isNotEmpty) {
-          processName = cmdParts[0].split('/').last;
-        }
-      }
-
-      // Parse status file
-      for (final line in statusContent.split('\n')) {
-        if (line.startsWith('Name:')) {
-          if (processName == 'Unknown') {
-            processName = line.substring(5).trim();
-          }
-        } else if (line.startsWith('Uid:')) {
-          final uidParts = line.substring(4).trim().split(RegExp(r'\s+'));
-          if (uidParts.isNotEmpty) {
-            user = uidParts[0];
-          }
-        } else if (line.startsWith('VmRSS:')) {
-          final memStr = line
-              .substring(6)
-              .trim()
-              .replaceAll(RegExp(r'[^\d]'), '');
-          memoryKB = int.tryParse(memStr) ?? 0;
-        }
-      }
-
-      if (memoryKB > 0) {
-        return ProcessMemoryInfo(
-          processName: processName,
-          pid: pid,
-          memoryKB: memoryKB,
-          user: user,
-        );
-      }
-
-      return null;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  /// Get Low Memory Killer information
-  Future<String> _getLowMemoryKillerInfo() async {
-    try {
-      // Try to read LMK information from various locations
-      final lmkPaths = [
-        '/sys/module/lowmemorykiller/parameters/minfree',
-        '/proc/sys/vm/extra_free_kbytes',
-        '/sys/kernel/mm/transparent_hugepage/enabled',
-      ];
-
-      final StringBuffer lmkInfo = StringBuffer();
-
-      for (final path in lmkPaths) {
-        try {
-          final file = File(path);
-          if (await file.exists()) {
-            final content = await file.readAsString();
-            lmkInfo.writeln('${path.split('/').last}: ${content.trim()}');
-          }
-        } catch (e) {
-          continue;
-        }
-      }
-
-      return lmkInfo.toString().trim();
-    } catch (e) {
-      return 'LMK info not available';
-    }
-  }
-
-  /// Get memory info in a more readable format
-  String formatBytes(int bytes) {
+  /// Format bytes to human readable string
+  String _formatBytes(int bytes) {
     const suffixes = ['B', 'KB', 'MB', 'GB', 'TB'];
     var size = bytes.toDouble();
     var suffixIndex = 0;
@@ -256,43 +53,163 @@ class AndroidMemoryService {
     return '${size.toStringAsFixed(1)} ${suffixes[suffixIndex]}';
   }
 
-  /// Get real-time memory updates (call periodically)
-  Stream<AndroidMemoryInfo> getMemoryStream({
-    Duration interval = const Duration(seconds: 2),
-  }) async* {
-    while (true) {
-      yield await getMemoryInfo();
-      await Future.delayed(interval);
-    }
+  // Private parsing methods
+
+  AndroidMemoryInfo _parseComprehensiveMemoryInfo(Map<dynamic, dynamic> data) {
+    final basic = data['basic'] as Map<dynamic, dynamic>? ?? {};
+    final procMemInfo = data['procMemInfo'] as Map<dynamic, dynamic>? ?? {};
+    final runtime = data['runtime'] as Map<dynamic, dynamic>? ?? {};
+    final vm = data['vm'] as Map<dynamic, dynamic>? ?? {};
+    final heap = data['heap'] as Map<dynamic, dynamic>? ?? {};
+
+    return AndroidMemoryInfo(
+      // Basic memory info from ActivityManager
+      totalMemoryBytes: _getInt(basic, 'totalMemory'),
+      availableMemoryBytes: _getInt(basic, 'availableMemory'),
+      usedMemoryBytes: _getInt(basic, 'usedMemory'),
+      lowMemory: _getBool(basic, 'lowMemory'),
+      threshold: _getInt(basic, 'threshold'),
+      memoryUsagePercentage: _getDouble(basic, 'memoryUsagePercentage'),
+      timestamp: _getInt(basic, 'timestamp'),
+
+      // Detailed information
+      procMemInfo: procMemInfo.isNotEmpty
+          ? _parseProcMemoryInfo(procMemInfo)
+          : null,
+      runtimeInfo: runtime.isNotEmpty ? _parseRuntimeMemoryInfo(runtime) : null,
+      vmInfo: vm.isNotEmpty ? _parseVMMemoryInfo(vm) : null,
+      heapInfo: heap.isNotEmpty ? _parseHeapMemoryInfo(heap) : null,
+    );
   }
 
-  /// Check if device is under memory pressure
-  Future<bool> isLowMemory({double threshold = 85.0}) async {
-    try {
-      final memInfo = await getMemoryInfo();
-      return memInfo.memoryUsagePercentage >= threshold;
-    } catch (e) {
-      return false;
-    }
+  AndroidProcMemoryInfo _parseProcMemoryInfo(Map<dynamic, dynamic> map) {
+    return AndroidProcMemoryInfo(
+      memTotal: _getInt(map, 'MemTotal'),
+      memFree: _getInt(map, 'MemFree'),
+      memAvailable: _getInt(map, 'MemAvailable'),
+      buffers: _getInt(map, 'Buffers'),
+      cached: _getInt(map, 'Cached'),
+      swapCached: _getInt(map, 'SwapCached'),
+      active: _getInt(map, 'Active'),
+      inactive: _getInt(map, 'Inactive'),
+      activeAnon: _getInt(map, 'Active(anon)'),
+      inactiveAnon: _getInt(map, 'Inactive(anon)'),
+      activeFile: _getInt(map, 'Active(file)'),
+      inactiveFile: _getInt(map, 'Inactive(file)'),
+      unevictable: _getInt(map, 'Unevictable'),
+      mlocked: _getInt(map, 'Mlocked'),
+      swapTotal: _getInt(map, 'SwapTotal'),
+      swapFree: _getInt(map, 'SwapFree'),
+      dirty: _getInt(map, 'Dirty'),
+      writeback: _getInt(map, 'Writeback'),
+      anonPages: _getInt(map, 'AnonPages'),
+      mapped: _getInt(map, 'Mapped'),
+      shmem: _getInt(map, 'Shmem'),
+      kreclaimable: _getInt(map, 'KReclaimable'),
+      slab: _getInt(map, 'Slab'),
+      sReclaimable: _getInt(map, 'SReclaimable'),
+      sUnreclaim: _getInt(map, 'SUnreclaim'),
+      kernelStack: _getInt(map, 'KernelStack'),
+      pageTables: _getInt(map, 'PageTables'),
+      nfsUnstable: _getInt(map, 'NFS_Unstable'),
+      bounce: _getInt(map, 'Bounce'),
+      writebackTmp: _getInt(map, 'WritebackTmp'),
+      commitLimit: _getInt(map, 'CommitLimit'),
+      committedAs: _getInt(map, 'Committed_AS'),
+      vmallocTotal: _getInt(map, 'VmallocTotal'),
+      vmallocUsed: _getInt(map, 'VmallocUsed'),
+      vmallocChunk: _getInt(map, 'VmallocChunk'),
+      percpu: _getInt(map, 'Percpu'),
+      hardwareCorrupted: _getInt(map, 'HardwareCorrupted'),
+      anonHugePages: _getInt(map, 'AnonHugePages'),
+      shmemHugePages: _getInt(map, 'ShmemHugePages'),
+      shmemPmdMapped: _getInt(map, 'ShmemPmdMapped'),
+      cmaTotal: _getInt(map, 'CmaTotal'),
+      cmaFree: _getInt(map, 'CmaFree'),
+      hugePagesTotal: _getInt(map, 'HugePages_Total'),
+      hugePagesFree: _getInt(map, 'HugePages_Free'),
+      hugePagesRsvd: _getInt(map, 'HugePages_Rsvd'),
+      hugePagesSurp: _getInt(map, 'HugePages_Surp'),
+      hugepagesize: _getInt(map, 'Hugepagesize'),
+      hugetlb: _getInt(map, 'Hugetlb'),
+    );
   }
 
-  /// Get available memory in human readable format
-  Future<String> getAvailableMemoryFormatted() async {
-    try {
-      final memInfo = await getMemoryInfo();
-      return formatBytes(memInfo.availableMemoryBytes);
-    } catch (e) {
-      return 'Unknown';
-    }
+  AndroidRuntimeMemoryInfo _parseRuntimeMemoryInfo(Map<dynamic, dynamic> map) {
+    return AndroidRuntimeMemoryInfo(
+      maxMemory: _getInt(map, 'maxMemory'),
+      totalMemory: _getInt(map, 'totalMemory'),
+      freeMemory: _getInt(map, 'freeMemory'),
+      usedMemory: _getInt(map, 'usedMemory'),
+    );
   }
 
-  /// Get total memory in human readable format
-  Future<String> getTotalMemoryFormatted() async {
-    try {
-      final memInfo = await getMemoryInfo();
-      return formatBytes(memInfo.totalMemoryBytes);
-    } catch (e) {
-      return 'Unknown';
-    }
+  AndroidVMMemoryInfo _parseVMMemoryInfo(Map<dynamic, dynamic> map) {
+    return AndroidVMMemoryInfo(
+      nativeHeapSize: _getInt(map, 'nativeHeapSize'),
+      nativeHeapAllocated: _getInt(map, 'nativeHeapAllocated'),
+      nativeHeapFree: _getInt(map, 'nativeHeapFree'),
+      dalvikPss: _getInt(map, 'dalvikPss'),
+    );
+  }
+
+  AndroidHeapMemoryInfo _parseHeapMemoryInfo(Map<dynamic, dynamic> map) {
+    return AndroidHeapMemoryInfo(
+      dalvikPrivateDirty: _getInt(map, 'dalvikPrivateDirty'),
+      dalvikPss: _getInt(map, 'dalvikPss'),
+      dalvikSharedDirty: _getInt(map, 'dalvikSharedDirty'),
+      nativePrivateDirty: _getInt(map, 'nativePrivateDirty'),
+      nativePss: _getInt(map, 'nativePss'),
+      nativeSharedDirty: _getInt(map, 'nativeSharedDirty'),
+      otherPrivateDirty: _getInt(map, 'otherPrivateDirty'),
+      otherPss: _getInt(map, 'otherPss'),
+      otherSharedDirty: _getInt(map, 'otherSharedDirty'),
+      totalPss: _getInt(map, 'totalPss'),
+      totalPrivateDirty: _getInt(map, 'totalPrivateDirty'),
+      totalSharedDirty: _getInt(map, 'totalSharedDirty'),
+    );
+  }
+
+  AndroidMemoryInfo _createErrorInfo(String error) {
+    return AndroidMemoryInfo(
+      totalMemoryBytes: 0,
+      availableMemoryBytes: 0,
+      usedMemoryBytes: 0,
+      lowMemory: false,
+      threshold: 0,
+      memoryUsagePercentage: 0.0,
+      timestamp: DateTime.now().millisecondsSinceEpoch,
+      error: error,
+    );
+  }
+
+  // Helper methods for safe type conversion
+  int _getInt(Map<dynamic, dynamic> map, String key) {
+    final value = map[key];
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is String) return int.tryParse(value) ?? 0;
+    return 0;
+  }
+
+  double _getDouble(Map<dynamic, dynamic> map, String key) {
+    final value = map[key];
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is String) return double.tryParse(value) ?? 0.0;
+    return 0.0;
+  }
+
+  bool _getBool(Map<dynamic, dynamic> map, String key) {
+    final value = map[key];
+    if (value is bool) return value;
+    if (value is int) return value != 0;
+    if (value is String) return value.toLowerCase() == 'true';
+    return false;
+  }
+
+  String _getString(Map<dynamic, dynamic> map, String key) {
+    final value = map[key];
+    return value?.toString() ?? '';
   }
 }
