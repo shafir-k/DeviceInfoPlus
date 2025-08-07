@@ -7,6 +7,7 @@ import com.deviceinfoplus.deviceinfoplus.services.CpuInfoService.CpuInfoChannelH
 import com.deviceinfoplus.deviceinfoplus.services.DeviceInfoService.DeviceInfoChannelHandler
 import com.deviceinfoplus.deviceinfoplus.services.NetworkInfoService.NetworkInfoChannelHandler
 import com.deviceinfoplus.deviceinfoplus.services.SystemInfoService.SystemInfoChannelHandler
+import com.deviceinfoplus.deviceinfoplus.services.DisplayInfoService.DisplayInfoChannelHandler
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
@@ -20,6 +21,7 @@ class MainActivity : FlutterActivity(){
     private lateinit var batteryChannelHandler: BatteryInfoChannelHandler
     private lateinit var networkChannelHandler: NetworkInfoChannelHandler
     private lateinit var connectivityChannelHandler: ConnectivityInfoChannelHandler
+    private lateinit var displayChannelHandler: DisplayInfoChannelHandler
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -35,7 +37,7 @@ class MainActivity : FlutterActivity(){
             flutterEngine.dartExecutor.binaryMessenger,
             DeviceInfoChannelHandler.CHANNEL_NAME
         )
-        deviceChannelHandler = DeviceInfoChannelHandler(this, deviceChannel)
+        deviceChannelHandler = DeviceInfoChannelHandler(this,deviceChannel)
         deviceChannel.setMethodCallHandler(deviceChannelHandler)
 
         // Setup SystemInfo Channel
@@ -101,6 +103,14 @@ class MainActivity : FlutterActivity(){
         connectivityChannelHandler = ConnectivityInfoChannelHandler(this, connectivityMethodChannel, connectivityEventChannel)
         connectivityMethodChannel.setMethodCallHandler(connectivityChannelHandler)
         connectivityEventChannel.setStreamHandler(connectivityChannelHandler)
+
+        // Setup Display Channel
+        val displayMethodChannel = MethodChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            DisplayInfoChannelHandler.METHOD_CHANNEL_NAME
+        )
+        displayChannelHandler = DisplayInfoChannelHandler(this)
+        displayMethodChannel.setMethodCallHandler(displayChannelHandler)
     }
 
     override fun onPause() {
@@ -153,6 +163,9 @@ class MainActivity : FlutterActivity(){
         }
         if (::connectivityChannelHandler.isInitialized) {
             connectivityChannelHandler.cleanup()
+        }
+        if (::displayChannelHandler.isInitialized) {
+            // DisplayInfoChannelHandler doesn't need cleanup as it has no ongoing operations
         }
     }
 }

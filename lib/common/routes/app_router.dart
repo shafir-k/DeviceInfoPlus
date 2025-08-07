@@ -3,6 +3,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:device_info_plus/common/routes/app_router.gr.dart';
 import 'package:device_info_plus/ui/pages/dashboard_page.dart';
 import 'package:device_info_plus/ui/pages/home/home_battery_tab_page.dart';
+import 'package:device_info_plus/ui/pages/home/home_display_tab_page.dart';
 
 @AutoRouterConfig()
 class AppRouter extends RootStackRouter {

@@ -15,6 +15,8 @@ import 'package:talker_bloc_logger/talker_bloc_logger.dart';
 import 'blocs/battery_details/battery_details_bloc.dart';
 import 'blocs/connectivity_details/connectivity_details_bloc.dart';
 import 'blocs/cpu_details/cpu_details_bloc.dart';
+import 'blocs/display_details/display_details_bloc.dart';
+import 'services/android_display_service.dart';
 
 final logger = Logger();
 
@@ -70,6 +72,9 @@ class MyApp extends StatelessWidget {
           create: (context) => ConnectivityDetailsBloc()
             ..add(LoadConnectivityDetails())
             ..add(StartConnectivityMonitoring()),
+        ),
+        BlocProvider(
+          create: (context) => DisplayDetailsBloc()..add(LoadDisplayDetails()),
         ),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
