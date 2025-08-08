@@ -55,11 +55,11 @@ extension MemoryDetailsEventPatterns on MemoryDetailsEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( LoadMemoryDetails value)?  loadMemoryDetails,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( GetMemoryDetails value)?  getMemoryDetails,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case LoadMemoryDetails() when loadMemoryDetails != null:
-return loadMemoryDetails(_that);case _:
+case GetMemoryDetails() when getMemoryDetails != null:
+return getMemoryDetails(_that);case _:
   return orElse();
 
 }
@@ -77,11 +77,14 @@ return loadMemoryDetails(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( LoadMemoryDetails value)  loadMemoryDetails,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( GetMemoryDetails value)  getMemoryDetails,}){
 final _that = this;
 switch (_that) {
-case LoadMemoryDetails():
-return loadMemoryDetails(_that);}
+case GetMemoryDetails():
+return getMemoryDetails(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -95,11 +98,11 @@ return loadMemoryDetails(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( LoadMemoryDetails value)?  loadMemoryDetails,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( GetMemoryDetails value)?  getMemoryDetails,}){
 final _that = this;
 switch (_that) {
-case LoadMemoryDetails() when loadMemoryDetails != null:
-return loadMemoryDetails(_that);case _:
+case GetMemoryDetails() when getMemoryDetails != null:
+return getMemoryDetails(_that);case _:
   return null;
 
 }
@@ -116,10 +119,10 @@ return loadMemoryDetails(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  loadMemoryDetails,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  getMemoryDetails,required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case LoadMemoryDetails() when loadMemoryDetails != null:
-return loadMemoryDetails();case _:
+case GetMemoryDetails() when getMemoryDetails != null:
+return getMemoryDetails();case _:
   return orElse();
 
 }
@@ -137,10 +140,13 @@ return loadMemoryDetails();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  loadMemoryDetails,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  getMemoryDetails,}) {final _that = this;
 switch (_that) {
-case LoadMemoryDetails():
-return loadMemoryDetails();}
+case GetMemoryDetails():
+return getMemoryDetails();case _:
+  throw StateError('Unexpected subclass');
+
+}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -154,10 +160,10 @@ return loadMemoryDetails();}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  loadMemoryDetails,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  getMemoryDetails,}) {final _that = this;
 switch (_that) {
-case LoadMemoryDetails() when loadMemoryDetails != null:
-return loadMemoryDetails();case _:
+case GetMemoryDetails() when getMemoryDetails != null:
+return getMemoryDetails();case _:
   return null;
 
 }
@@ -168,8 +174,8 @@ return loadMemoryDetails();case _:
 /// @nodoc
 
 
-class LoadMemoryDetails implements MemoryDetailsEvent {
-  const LoadMemoryDetails();
+class GetMemoryDetails implements MemoryDetailsEvent {
+  const GetMemoryDetails();
   
 
 
@@ -179,7 +185,7 @@ class LoadMemoryDetails implements MemoryDetailsEvent {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoadMemoryDetails);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GetMemoryDetails);
 }
 
 
@@ -188,7 +194,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'MemoryDetailsEvent.loadMemoryDetails()';
+  return 'MemoryDetailsEvent.getMemoryDetails()';
 }
 
 
@@ -241,13 +247,14 @@ extension MemoryDetailsStatePatterns on MemoryDetailsState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( MemoryDetailsInitial value)?  initial,TResult Function( MemoryDetailsLoading value)?  loading,TResult Function( MemoryDetailsLoaded value)?  loaded,TResult Function( MemoryDetailsError value)?  error,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial value)?  initial,TResult Function( _Loading value)?  loading,TResult Function( _Loaded value)?  loaded,TResult Function( _Monitoring value)?  monitoring,TResult Function( _Error value)?  error,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case MemoryDetailsInitial() when initial != null:
-return initial(_that);case MemoryDetailsLoading() when loading != null:
-return loading(_that);case MemoryDetailsLoaded() when loaded != null:
-return loaded(_that);case MemoryDetailsError() when error != null:
+case _Initial() when initial != null:
+return initial(_that);case _Loading() when loading != null:
+return loading(_that);case _Loaded() when loaded != null:
+return loaded(_that);case _Monitoring() when monitoring != null:
+return monitoring(_that);case _Error() when error != null:
 return error(_that);case _:
   return orElse();
 
@@ -266,13 +273,14 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( MemoryDetailsInitial value)  initial,required TResult Function( MemoryDetailsLoading value)  loading,required TResult Function( MemoryDetailsLoaded value)  loaded,required TResult Function( MemoryDetailsError value)  error,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial value)  initial,required TResult Function( _Loading value)  loading,required TResult Function( _Loaded value)  loaded,required TResult Function( _Monitoring value)  monitoring,required TResult Function( _Error value)  error,}){
 final _that = this;
 switch (_that) {
-case MemoryDetailsInitial():
-return initial(_that);case MemoryDetailsLoading():
-return loading(_that);case MemoryDetailsLoaded():
-return loaded(_that);case MemoryDetailsError():
+case _Initial():
+return initial(_that);case _Loading():
+return loading(_that);case _Loaded():
+return loaded(_that);case _Monitoring():
+return monitoring(_that);case _Error():
 return error(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -290,13 +298,14 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( MemoryDetailsInitial value)?  initial,TResult? Function( MemoryDetailsLoading value)?  loading,TResult? Function( MemoryDetailsLoaded value)?  loaded,TResult? Function( MemoryDetailsError value)?  error,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial value)?  initial,TResult? Function( _Loading value)?  loading,TResult? Function( _Loaded value)?  loaded,TResult? Function( _Monitoring value)?  monitoring,TResult? Function( _Error value)?  error,}){
 final _that = this;
 switch (_that) {
-case MemoryDetailsInitial() when initial != null:
-return initial(_that);case MemoryDetailsLoading() when loading != null:
-return loading(_that);case MemoryDetailsLoaded() when loaded != null:
-return loaded(_that);case MemoryDetailsError() when error != null:
+case _Initial() when initial != null:
+return initial(_that);case _Loading() when loading != null:
+return loading(_that);case _Loaded() when loaded != null:
+return loaded(_that);case _Monitoring() when monitoring != null:
+return monitoring(_that);case _Error() when error != null:
 return error(_that);case _:
   return null;
 
@@ -314,12 +323,13 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( AndroidMemoryInfo memoryInfo,  bool isLowMemory)?  loaded,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( AndroidMemoryInfo memoryInfo)?  loaded,TResult Function( AndroidMemoryInfo memoryInfo)?  monitoring,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case MemoryDetailsInitial() when initial != null:
-return initial();case MemoryDetailsLoading() when loading != null:
-return loading();case MemoryDetailsLoaded() when loaded != null:
-return loaded(_that.memoryInfo,_that.isLowMemory);case MemoryDetailsError() when error != null:
+case _Initial() when initial != null:
+return initial();case _Loading() when loading != null:
+return loading();case _Loaded() when loaded != null:
+return loaded(_that.memoryInfo);case _Monitoring() when monitoring != null:
+return monitoring(_that.memoryInfo);case _Error() when error != null:
 return error(_that.message);case _:
   return orElse();
 
@@ -338,12 +348,13 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( AndroidMemoryInfo memoryInfo,  bool isLowMemory)  loaded,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( AndroidMemoryInfo memoryInfo)  loaded,required TResult Function( AndroidMemoryInfo memoryInfo)  monitoring,required TResult Function( String message)  error,}) {final _that = this;
 switch (_that) {
-case MemoryDetailsInitial():
-return initial();case MemoryDetailsLoading():
-return loading();case MemoryDetailsLoaded():
-return loaded(_that.memoryInfo,_that.isLowMemory);case MemoryDetailsError():
+case _Initial():
+return initial();case _Loading():
+return loading();case _Loaded():
+return loaded(_that.memoryInfo);case _Monitoring():
+return monitoring(_that.memoryInfo);case _Error():
 return error(_that.message);case _:
   throw StateError('Unexpected subclass');
 
@@ -361,12 +372,13 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( AndroidMemoryInfo memoryInfo,  bool isLowMemory)?  loaded,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( AndroidMemoryInfo memoryInfo)?  loaded,TResult? Function( AndroidMemoryInfo memoryInfo)?  monitoring,TResult? Function( String message)?  error,}) {final _that = this;
 switch (_that) {
-case MemoryDetailsInitial() when initial != null:
-return initial();case MemoryDetailsLoading() when loading != null:
-return loading();case MemoryDetailsLoaded() when loaded != null:
-return loaded(_that.memoryInfo,_that.isLowMemory);case MemoryDetailsError() when error != null:
+case _Initial() when initial != null:
+return initial();case _Loading() when loading != null:
+return loading();case _Loaded() when loaded != null:
+return loaded(_that.memoryInfo);case _Monitoring() when monitoring != null:
+return monitoring(_that.memoryInfo);case _Error() when error != null:
 return error(_that.message);case _:
   return null;
 
@@ -378,8 +390,8 @@ return error(_that.message);case _:
 /// @nodoc
 
 
-class MemoryDetailsInitial implements MemoryDetailsState {
-  const MemoryDetailsInitial();
+class _Initial implements MemoryDetailsState {
+  const _Initial();
   
 
 
@@ -389,7 +401,7 @@ class MemoryDetailsInitial implements MemoryDetailsState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MemoryDetailsInitial);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Initial);
 }
 
 
@@ -410,8 +422,8 @@ String toString() {
 /// @nodoc
 
 
-class MemoryDetailsLoading implements MemoryDetailsState {
-  const MemoryDetailsLoading();
+class _Loading implements MemoryDetailsState {
+  const _Loading();
   
 
 
@@ -421,7 +433,7 @@ class MemoryDetailsLoading implements MemoryDetailsState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MemoryDetailsLoading);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loading);
 }
 
 
@@ -442,44 +454,43 @@ String toString() {
 /// @nodoc
 
 
-class MemoryDetailsLoaded implements MemoryDetailsState {
-  const MemoryDetailsLoaded({required this.memoryInfo, this.isLowMemory = false});
+class _Loaded implements MemoryDetailsState {
+  const _Loaded(this.memoryInfo);
   
 
  final  AndroidMemoryInfo memoryInfo;
-@JsonKey() final  bool isLowMemory;
 
 /// Create a copy of MemoryDetailsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$MemoryDetailsLoadedCopyWith<MemoryDetailsLoaded> get copyWith => _$MemoryDetailsLoadedCopyWithImpl<MemoryDetailsLoaded>(this, _$identity);
+_$LoadedCopyWith<_Loaded> get copyWith => __$LoadedCopyWithImpl<_Loaded>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MemoryDetailsLoaded&&(identical(other.memoryInfo, memoryInfo) || other.memoryInfo == memoryInfo)&&(identical(other.isLowMemory, isLowMemory) || other.isLowMemory == isLowMemory));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loaded&&(identical(other.memoryInfo, memoryInfo) || other.memoryInfo == memoryInfo));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,memoryInfo,isLowMemory);
+int get hashCode => Object.hash(runtimeType,memoryInfo);
 
 @override
 String toString() {
-  return 'MemoryDetailsState.loaded(memoryInfo: $memoryInfo, isLowMemory: $isLowMemory)';
+  return 'MemoryDetailsState.loaded(memoryInfo: $memoryInfo)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $MemoryDetailsLoadedCopyWith<$Res> implements $MemoryDetailsStateCopyWith<$Res> {
-  factory $MemoryDetailsLoadedCopyWith(MemoryDetailsLoaded value, $Res Function(MemoryDetailsLoaded) _then) = _$MemoryDetailsLoadedCopyWithImpl;
+abstract mixin class _$LoadedCopyWith<$Res> implements $MemoryDetailsStateCopyWith<$Res> {
+  factory _$LoadedCopyWith(_Loaded value, $Res Function(_Loaded) _then) = __$LoadedCopyWithImpl;
 @useResult
 $Res call({
- AndroidMemoryInfo memoryInfo, bool isLowMemory
+ AndroidMemoryInfo memoryInfo
 });
 
 
@@ -487,20 +498,19 @@ $AndroidMemoryInfoCopyWith<$Res> get memoryInfo;
 
 }
 /// @nodoc
-class _$MemoryDetailsLoadedCopyWithImpl<$Res>
-    implements $MemoryDetailsLoadedCopyWith<$Res> {
-  _$MemoryDetailsLoadedCopyWithImpl(this._self, this._then);
+class __$LoadedCopyWithImpl<$Res>
+    implements _$LoadedCopyWith<$Res> {
+  __$LoadedCopyWithImpl(this._self, this._then);
 
-  final MemoryDetailsLoaded _self;
-  final $Res Function(MemoryDetailsLoaded) _then;
+  final _Loaded _self;
+  final $Res Function(_Loaded) _then;
 
 /// Create a copy of MemoryDetailsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? memoryInfo = null,Object? isLowMemory = null,}) {
-  return _then(MemoryDetailsLoaded(
-memoryInfo: null == memoryInfo ? _self.memoryInfo : memoryInfo // ignore: cast_nullable_to_non_nullable
-as AndroidMemoryInfo,isLowMemory: null == isLowMemory ? _self.isLowMemory : isLowMemory // ignore: cast_nullable_to_non_nullable
-as bool,
+@pragma('vm:prefer-inline') $Res call({Object? memoryInfo = null,}) {
+  return _then(_Loaded(
+null == memoryInfo ? _self.memoryInfo : memoryInfo // ignore: cast_nullable_to_non_nullable
+as AndroidMemoryInfo,
   ));
 }
 
@@ -519,8 +529,83 @@ $AndroidMemoryInfoCopyWith<$Res> get memoryInfo {
 /// @nodoc
 
 
-class MemoryDetailsError implements MemoryDetailsState {
-  const MemoryDetailsError({required this.message});
+class _Monitoring implements MemoryDetailsState {
+  const _Monitoring(this.memoryInfo);
+  
+
+ final  AndroidMemoryInfo memoryInfo;
+
+/// Create a copy of MemoryDetailsState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$MonitoringCopyWith<_Monitoring> get copyWith => __$MonitoringCopyWithImpl<_Monitoring>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Monitoring&&(identical(other.memoryInfo, memoryInfo) || other.memoryInfo == memoryInfo));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,memoryInfo);
+
+@override
+String toString() {
+  return 'MemoryDetailsState.monitoring(memoryInfo: $memoryInfo)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$MonitoringCopyWith<$Res> implements $MemoryDetailsStateCopyWith<$Res> {
+  factory _$MonitoringCopyWith(_Monitoring value, $Res Function(_Monitoring) _then) = __$MonitoringCopyWithImpl;
+@useResult
+$Res call({
+ AndroidMemoryInfo memoryInfo
+});
+
+
+$AndroidMemoryInfoCopyWith<$Res> get memoryInfo;
+
+}
+/// @nodoc
+class __$MonitoringCopyWithImpl<$Res>
+    implements _$MonitoringCopyWith<$Res> {
+  __$MonitoringCopyWithImpl(this._self, this._then);
+
+  final _Monitoring _self;
+  final $Res Function(_Monitoring) _then;
+
+/// Create a copy of MemoryDetailsState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? memoryInfo = null,}) {
+  return _then(_Monitoring(
+null == memoryInfo ? _self.memoryInfo : memoryInfo // ignore: cast_nullable_to_non_nullable
+as AndroidMemoryInfo,
+  ));
+}
+
+/// Create a copy of MemoryDetailsState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AndroidMemoryInfoCopyWith<$Res> get memoryInfo {
+  
+  return $AndroidMemoryInfoCopyWith<$Res>(_self.memoryInfo, (value) {
+    return _then(_self.copyWith(memoryInfo: value));
+  });
+}
+}
+
+/// @nodoc
+
+
+class _Error implements MemoryDetailsState {
+  const _Error(this.message);
   
 
  final  String message;
@@ -529,13 +614,13 @@ class MemoryDetailsError implements MemoryDetailsState {
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$MemoryDetailsErrorCopyWith<MemoryDetailsError> get copyWith => _$MemoryDetailsErrorCopyWithImpl<MemoryDetailsError>(this, _$identity);
+_$ErrorCopyWith<_Error> get copyWith => __$ErrorCopyWithImpl<_Error>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MemoryDetailsError&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Error&&(identical(other.message, message) || other.message == message));
 }
 
 
@@ -551,8 +636,8 @@ String toString() {
 }
 
 /// @nodoc
-abstract mixin class $MemoryDetailsErrorCopyWith<$Res> implements $MemoryDetailsStateCopyWith<$Res> {
-  factory $MemoryDetailsErrorCopyWith(MemoryDetailsError value, $Res Function(MemoryDetailsError) _then) = _$MemoryDetailsErrorCopyWithImpl;
+abstract mixin class _$ErrorCopyWith<$Res> implements $MemoryDetailsStateCopyWith<$Res> {
+  factory _$ErrorCopyWith(_Error value, $Res Function(_Error) _then) = __$ErrorCopyWithImpl;
 @useResult
 $Res call({
  String message
@@ -563,18 +648,18 @@ $Res call({
 
 }
 /// @nodoc
-class _$MemoryDetailsErrorCopyWithImpl<$Res>
-    implements $MemoryDetailsErrorCopyWith<$Res> {
-  _$MemoryDetailsErrorCopyWithImpl(this._self, this._then);
+class __$ErrorCopyWithImpl<$Res>
+    implements _$ErrorCopyWith<$Res> {
+  __$ErrorCopyWithImpl(this._self, this._then);
 
-  final MemoryDetailsError _self;
-  final $Res Function(MemoryDetailsError) _then;
+  final _Error _self;
+  final $Res Function(_Error) _then;
 
 /// Create a copy of MemoryDetailsState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
-  return _then(MemoryDetailsError(
-message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+  return _then(_Error(
+null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

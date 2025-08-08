@@ -14,30 +14,31 @@ class HomeDashboardTabPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final memoryState = context.watch<MemoryDetailsBloc>();
 
-    return memoryState.state.when(
-      initial: () {
-        return Scaffold(child: Text("Dashboard").center());
-      },
-      loading: () {
-        return Scaffold(child: Text("Dashboard").center());
-      },
-      loaded: (memoryInfo, isLowMemory) => Scaffold(
-        child: SingleChildScrollView(
-          physics: ClampingScrollPhysics(),
-          child: Column(
-            children: [
-              Text(memoryInfo.toString()).center(),
-              Text(
-                memoryInfo.availableMemoryBytes.toBytesUnit(
-                  BytesUnit.megabytes,
-                  fractionDigits: 1,
-                ),
-              ).center(),
-            ],
-          ),
-        ),
-      ),
-      error: (message) => Scaffold(child: Text("Dashboard").center()),
-    );
+    return SizedBox();
+    // return memoryState.state.when(
+    //   initial: () {
+    //     return Scaffold(child: Text("Dashboard").center());
+    //   },
+    //   loading: () {
+    //     return Scaffold(child: Text("Dashboard").center());
+    //   },
+    //   loaded: (memoryInfo, isLowMemory) => Scaffold(
+    //     child: SingleChildScrollView(
+    //       physics: ClampingScrollPhysics(),
+    //       child: Column(
+    //         children: [
+    //           Text(memoryInfo.toString()).center(),
+    //           Text(
+    //             memoryInfo.availableMemoryBytes.toBytesUnit(
+    //               BytesUnit.megabytes,
+    //               fractionDigits: 1,
+    //             ),
+    //           ).center(),
+    //         ],
+    //       ),
+    //     ),
+    //   ),
+    //   error: (message) => Scaffold(child: Text("Dashboard").center()),
+    // );
   }
 }

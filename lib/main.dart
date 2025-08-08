@@ -44,8 +44,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => ThemeBloc()),
         BlocProvider(
           create: (context) =>
-              MemoryDetailsBloc(memoryService: AndroidMemoryService())
-                ..add(LoadMemoryDetails()),
+              MemoryDetailsBloc(AndroidMemoryService())
+                ..add(GetMemoryDetails()),
         ),
         BlocProvider(
           create: (context) => DeviceDetailsBloc()..add(LoadDeviceDetails()),
