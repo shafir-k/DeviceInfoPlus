@@ -41,10 +41,6 @@ class HomeBatteryTabPage extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          // Monitoring Control Card
-          _buildMonitoringCard(context, isMonitoring),
-
-          const SizedBox(height: 16),
           // Battery Status Overview Card
           _buildBatteryOverviewCard(context, batteryInfo, bloc),
 
@@ -239,6 +235,7 @@ class HomeBatteryTabPage extends StatelessWidget {
               width: 120,
               height: 120,
               child: Stack(
+                fit: StackFit.expand,
                 children: [
                   CircularProgressIndicator(
                     value: batteryInfo.level / 100.0,
@@ -377,54 +374,6 @@ class HomeBatteryTabPage extends StatelessWidget {
                 ],
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMonitoringCard(BuildContext context, bool isMonitoring) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  isMonitoring ? Icons.monitor : Icons.monitor_outlined,
-                  color: isMonitoring ? Colors.green : Colors.gray,
-                  size: 24,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Real-time Monitoring',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Spacer(),
-                Switch(
-                  value: isMonitoring,
-                  onChanged: (value) {
-                    if (value) {
-                      context.read<BatteryDetailsBloc>().startMonitoring();
-                    } else {
-                      context.read<BatteryDetailsBloc>().stopMonitoring();
-                    }
-                  },
-                ),
-              ],
-            ),
-            if (isMonitoring) ...[
-              const SizedBox(height: 8),
-              Text(
-                'Monitoring active - Battery data updates every 2 seconds',
-                style: TextStyle(color: Colors.green[600]),
-              ),
-            ],
           ],
         ),
       ),

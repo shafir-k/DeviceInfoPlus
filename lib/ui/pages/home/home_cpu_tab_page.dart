@@ -36,11 +36,6 @@ class HomeCpuTabPage extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          // Monitoring Control Card
-          _buildMonitoringCard(context, isMonitoring),
-
-          const SizedBox(height: 16),
-
           // Basic CPU Information Card
           _buildInfoCard('Basic Information', Icons.memory, Colors.blue, [
             _buildDetailRow('CPU Name', cpuInfo.cpuName),
@@ -203,54 +198,6 @@ class HomeCpuTabPage extends StatelessWidget {
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildMonitoringCard(BuildContext context, bool isMonitoring) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  isMonitoring ? Icons.monitor : Icons.monitor_outlined,
-                  color: isMonitoring ? Colors.green : Colors.gray,
-                  size: 24,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Real-time Monitoring',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Spacer(),
-                Switch(
-                  value: isMonitoring,
-                  onChanged: (value) {
-                    if (value) {
-                      context.read<CpuDetailsBloc>().startMonitoring();
-                    } else {
-                      context.read<CpuDetailsBloc>().stopMonitoring();
-                    }
-                  },
-                ),
-              ],
-            ),
-            if (isMonitoring) ...[
-              const SizedBox(height: 8),
-              Text(
-                'Monitoring active - Data updates in real-time',
-                style: TextStyle(color: Colors.green[600]),
-              ),
-            ],
-          ],
-        ),
       ),
     );
   }

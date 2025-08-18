@@ -20,10 +20,9 @@ class HomeNetworkTabPage extends StatelessWidget {
           child: state.when(
             initial: () => const Center(child: CircularProgressIndicator()),
             loading: () => const Center(child: CircularProgressIndicator()),
-            loaded: (networkInfo) =>
-                _buildNetworkContent(context, networkInfo, false),
+            loaded: (networkInfo) => _buildNetworkContent(context, networkInfo),
             monitoring: (networkInfo) =>
-                _buildNetworkContent(context, networkInfo, true),
+                _buildNetworkContent(context, networkInfo),
             error: (message) => _buildErrorWidget(context, message),
           ),
         );
@@ -34,7 +33,6 @@ class HomeNetworkTabPage extends StatelessWidget {
   Widget _buildNetworkContent(
     BuildContext context,
     AndroidNetworkInfo networkInfo,
-    bool isMonitoring,
   ) {
     final bloc = context.read<NetworkDetailsBloc>();
 
@@ -42,11 +40,6 @@ class HomeNetworkTabPage extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          // Monitoring Control Card
-          _buildMonitoringCard(context, isMonitoring),
-
-          const SizedBox(height: 16),
-
           // Network Status Overview Card
           _buildNetworkOverviewCard(context, networkInfo, bloc),
 
@@ -434,54 +427,6 @@ class HomeNetworkTabPage extends StatelessWidget {
         ),
       ),
     ]);
-  }
-
-  Widget _buildMonitoringCard(BuildContext context, bool isMonitoring) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  isMonitoring ? Icons.monitor : Icons.monitor_outlined,
-                  color: isMonitoring ? Colors.green : Colors.gray,
-                  size: 24,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Real-time Monitoring',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Spacer(),
-                Switch(
-                  value: isMonitoring,
-                  onChanged: (value) {
-                    if (value) {
-                      context.read<NetworkDetailsBloc>().startMonitoring();
-                    } else {
-                      context.read<NetworkDetailsBloc>().stopMonitoring();
-                    }
-                  },
-                ),
-              ],
-            ),
-            if (isMonitoring) ...[
-              const SizedBox(height: 8),
-              Text(
-                'Monitoring active - Network data updates every 3 seconds',
-                style: TextStyle(color: Colors.green[600]),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
   }
 
   Widget _buildErrorWidget(BuildContext context, String message) {

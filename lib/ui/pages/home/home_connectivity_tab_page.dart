@@ -42,11 +42,6 @@ class HomeConnectivityTabPage extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          // Monitoring Control Card
-          _buildMonitoringCard(context, isMonitoring),
-
-          const SizedBox(height: 16),
-
           // Connectivity Overview Card
           _buildConnectivityOverviewCard(context, connectivityInfo, bloc),
 
@@ -423,54 +418,6 @@ class HomeConnectivityTabPage extends StatelessWidget {
       ),
       _buildDetailRow('USB Tethering', otherInfo.tethering.usb ? 'Yes' : 'No'),
     ]);
-  }
-
-  Widget _buildMonitoringCard(BuildContext context, bool isMonitoring) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  isMonitoring ? Icons.monitor : Icons.monitor_outlined,
-                  color: isMonitoring ? Colors.green : Colors.gray,
-                  size: 24,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Real-time Monitoring',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Spacer(),
-                Switch(
-                  value: isMonitoring,
-                  onChanged: (value) {
-                    if (value) {
-                      context.read<ConnectivityDetailsBloc>().startMonitoring();
-                    } else {
-                      context.read<ConnectivityDetailsBloc>().stopMonitoring();
-                    }
-                  },
-                ),
-              ],
-            ),
-            if (isMonitoring) ...[
-              const SizedBox(height: 8),
-              Text(
-                'Monitoring active - Connectivity data updates every 5 seconds',
-                style: TextStyle(color: Colors.green[600]),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
   }
 
   Widget _buildErrorWidget(BuildContext context, String message) {
