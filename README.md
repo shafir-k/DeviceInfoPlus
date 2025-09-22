@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Flutter](https://img.shields.io/badge/Flutter-3.10+-blue.svg)](https://flutter.dev/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![GitHub stars](https://img.shields.io/github/stars/[username]/device-info-plus.svg)](https://github.com/[username]/device-info-plus/stargazers)
+[![GitHub stars](https://img.shields.io/github/stars/shafir-k/DeviceInfoPlus.svg)](https://github.com/shafir-k/DeviceInfoPlus/stargazers)
 
 A **completely free and open source** Flutter app that provides comprehensive device information in a beautiful, user-friendly interface.
 
