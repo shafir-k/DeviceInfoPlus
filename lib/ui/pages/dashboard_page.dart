@@ -41,7 +41,7 @@ class DashboardPage extends StatelessWidget {
               children: [
                 buildButton('Home', BootstrapIcons.house),
                 buildButton('Tools', BootstrapIcons.tools),
-                buildButton('Library', LucideIcons.settings),
+                buildButton('Settings', LucideIcons.settings),
               ],
             ),
           ],

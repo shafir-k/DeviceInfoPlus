@@ -151,13 +151,6 @@ class _HomeDashboardTabPageState extends State<HomeDashboardTabPage>
               () => context.router.push(const HomeBatteryTabRoute()),
             ),
             _buildFeatureCard(
-              'Memory',
-              Icons.storage,
-              Colors.purple,
-              _buildMemoryOverview(),
-              () => context.router.push(const HomeMemoryTabRoute()),
-            ),
-            _buildFeatureCard(
               'Network',
               Icons.wifi,
               Colors.indigo,
@@ -177,6 +170,13 @@ class _HomeDashboardTabPageState extends State<HomeDashboardTabPage>
               Colors.pink,
               _buildDisplayOverview(),
               () => context.router.push(const HomeDisplayTabRoute()),
+            ),
+            _buildFeatureCard(
+              'Memory',
+              Icons.storage,
+              Colors.purple,
+              _buildMemoryOverview(),
+              () => context.router.push(const HomeMemoryTabRoute()),
             ),
           ],
         );
