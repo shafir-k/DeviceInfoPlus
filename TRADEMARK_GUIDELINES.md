@@ -6,9 +6,8 @@ Device Info Plus is and will remain completely **free and open source**. The ent
 ## Trademark Protection
 While the code is open source, please note:
 
-1. **Trademark Protection**: "Device Info Plus" name, logo, and distinctive branding elements are trademarks of Shafir K
-2. **Official App Store Presence**: The official version is available on Google Play Store
-3. **Attribution Requirements**: Forks and derivatives should provide clear attribution
+1. **Official App Store Presence**: The official version is available on Google Play Store
+2. **Attribution Requirements**: Forks and derivatives should provide clear attribution
 
 ## App Store Distribution Guidelines
 We encourage community participation, but to avoid user confusion:
