@@ -32,3 +32,10 @@ We encourage community participation, but to avoid user confusion:
 
 ## Attribution Requirements
 If you create a derivative work, please include:
+Based on Device Info Plus by Shafir K
+Original project: https://github.com/shafir-k/DeviceInfoPlus
+
+## Questions?
+For questions about trademark usage or app store distribution, contact: https://www.linkedin.com/in/shafir-k
+
+**Remember**: The goal is to build an amazing open source community while maintaining clarity for users! 🚀
